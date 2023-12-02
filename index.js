@@ -31,7 +31,7 @@
 //     let guess = Math.floor((min + max) / 2);
 
 //     let answer =await ask('Is your number $(guess)? (yes or no)\n');
-// if (answer.toLowerCase()---'yes') 
+// if (answer.toLowerCase()---'yes')
 // {
 //   console.log('Horray! I guessed your number $(guess) correctly.');
 //   break;
@@ -48,7 +48,7 @@
 //     }
 //    else {
 //     console.log ("Ivalid input. Please enter 'yes' or 'no'.");
-    
+
 //   }
 // }
 const readline = require("readline");
@@ -64,12 +64,13 @@ async function start() {
   await guessTheNumber();
 }
 async function guessTheNumber() {
-
   // and there to be a conditional that
   // if (guesses === maxGuesses) then end the game (ran out of guesses)
   console.log(
     "Let's play a game where you (human) make up a number and I (computer) try to guess it."
   );
+  let max = await prompt("Choose your range greater than 1 \n");
+  console.log(`Your range will be between 1 - ${max}`);
   let secretNumber = await prompt(
     "What is your secret number?\nI won't peek, I promise...\n"
   );
@@ -81,44 +82,46 @@ async function guessTheNumber() {
     process.exit();
   } else {
     console.log("Let's begin!");
-  }function getRandomNumberFromRange(min, max) {
+  }
+  function getRandomNumberFromRange(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
-  }let min = 1;
-  let max = 100;
+  }
+  let min = 1;
   const maxAttempts = Math.floor(Math.log2(max) + 1);
 
   let randomNumber = getRandomNumberFromRange(min, max);
   let attempts = 1;
-  
+
   while (true) {
-    if(attempts > maxAttempts){
-      console.log('Out of attempts, play again');
+    if (attempts > maxAttempts) {
+      console.log("But I've run out of attempts... play again");
       process.exit();
     } else {
-    let guessResponse = await prompt(
-      `Attempt Number ${attempts}/${maxAttempts}.\nI think your number is ${randomNumber}.\nIs this right? Is your number higher or lower?\n   (R) - Right\n   (H) - Higher\n   (L) - Lower\n`
-    );
-    let guess = guessResponse.toLowerCase();
-    if (guess === "r") {
-      console.log(`Yay! I guessed correctly!\n End of game.`);
-      process.exit();
-    } else if (guess === "h") {
-      console.log(`Ok. The number is higher.`);
-      min = randomNumber + 1;
-      randomNumber = getRandomNumberFromRange(min, max);
-    } else if (guess === "l") {
-      console.log(`Ok. The number is lower.`);
-      max = randomNumber - 1;
-      randomNumber = getRandomNumberFromRange(min, max);
-    } else {
-      console.log(
-        `Please answer (R) - Right\n   (H) - Higher\n   (L) - Lower\n `
+      let guessResponse = await prompt(
+        `Attempt Number ${attempts}/${maxAttempts}.\nI think your number is ${randomNumber}.\nIs this right? Is your number higher or lower?\n   (R) - Right\n   (H) - Higher\n   (L) - Lower\n`
       );
-    }
-    attempts++;
+      let guess = guessResponse.toLowerCase();
+      if (guess === "r") {
+        console.log(`Yay! I guessed correctly!\n End of game.`);
+        process.exit();
+      } else if (guess === "h") {
+        console.log(`Ok. The number is higher.`);
+        min = randomNumber + 1;
+        randomNumber = getRandomNumberFromRange(min, max);
+      } else if (guess === "l") {
+        console.log(`Ok. The number is lower.`);
+        max = randomNumber - 1;
+        randomNumber = getRandomNumberFromRange(min, max);
+      } else {
+        console.log(
+          `Please answer (R) - Right\n   (H) - Higher\n   (L) - Lower\n `
+        );
+      }
+      attempts++;
     }
   }
-}async function reverseGuessTheNumber() {
+}
+async function reverseGuessTheNumber() {
   // code out functionality for this
 }
 
