@@ -1,88 +1,29 @@
-const readline = require("readline");
-const rl = readline.createInterface(process.stdin, process.stdout);
+const gameContainer = document.getElementById("game-container");
 
-function prompt(promptText) {
-  return new Promise((resolve, reject) => {
-    rl.question(promptText, resolve);
-  });
-}
+let randomNumber = Math.floor(Math.random() * 100) + 1;
+let attempts = 0;
 
-function getRandomNumberFromRange(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
+const guessInput = document.createElement("input");
+guessInput.type = "number";
+guessInput.placeholder = "Enter your guess";
 
-async function start() {
-  await guessTheNumberGame();
-}
+const submitButton = document.createElement("button");
+submitButton.textContent = "Submit Guess";
 
-async function guessTheNumberGame() {
-  let minNumber = 1;
-  let attempts = 1;
+const resultMessage = document.createElement("p");
 
-  console.log(
-    "Let's play a game where you (human) make up a number and I (computer) try to guess it."
-  );
+gameContainer.appendChild(guessInput);
+gameContainer.appendChild(submitButton);
+gameContainer.appendChild(resultMessage);
 
-  let maxNumber = await prompt("Choose your range greater than 1 \n");
-  console.log(`Your range will be between 1 - ${maxNumber}`);
-
-  const maxAttempts = Math.floor(Math.log2(maxNumber) + 1);
-
-  let randomNumber = getRandomNumberFromRange(minNumber, maxNumber);
-
-  let secretNumber = await prompt(
-    "What is your secret number?\nI won't peek, I promise...\n"
-  );
-  console.log(`You entered: ${secretNumber}`);
-
-  if (secretNumber < 1 || secretNumber > maxNumber || isNaN(secretNumber)) {
-    console.log(
-      `Please, make sure you input a number, Your range will be between 1 - ${maxNumber} Start over!`
-    );
-    process.exit();
+submitButton.addEventListener("click", () => {
+  attempts++;
+  const userGuess = parseInt(guessInput.value);
+  if (userGuess === randomNumber) {
+    resultMessage.textContent = `Correct! You guessed it in ${attempts} attempts.`;
+  } else if (userGuess < randomNumber) {
+    resultMessage.textContent = "Too low! Try again.";
   } else {
-    console.log("Let's begin!");
+    resultMessage.textContent = "Too high! Try again.";
   }
-  //games asks you to guess number
-  while (true) {
-    if (attempts > maxAttempts) {
-      console.log("But I've run out of attempts... play again");
-      process.exit();
-    }
-    let guessResponse = await prompt(
-      `Attempt Number ${attempts}/${maxAttempts}.\nI think your number is ${randomNumber}.\nIs this right? Is your number higher or lower?\n   (R) - Right\n   (H) - Higher\n   (L) - Lower\n`
-    );
-
-    let guess = guessResponse.toLowerCase();
-
-    if (guess === "r") {
-      console.log(`Yay! I guessed correctly in {attempts}!\n End of game.`);
-      process.exit();
-    } else if (
-      //logic for if random number contradicts secret number
-      (guess === "l" && randomNumber < secretNumber) ||
-      (guess === "h" && randomNumber > secretNumber)
-    ) {
-      console.log(`Invalid entry: contradictory response. Start over`);
-      process.exit();
-    } else if (guess === "h") {
-      // logic for if secret number is higher than random number
-      console.log(`Ok. The number is higher.`);
-      minNumber = randomNumber + 1;
-      randomNumber = getRandomNumberFromRange(minNumber, maxNumber);
-    } else if (guess === "l") {
-      //logic for is secret number is lower than random number
-      console.log(`Ok. The number is lower.`);
-      maxNumber = randomNumber - 1;
-      randomNumber = getRandomNumberFromRange(minNumber, maxNumber);
-    } else {
-      console.log(
-        `Please answer (R) - Right\n   (H) - Higher\n   (L) - Lower\n `
-      );
-    }
-    attempts++; // increment attempts by 1
-  }
-}
-
-start();
-// ~ to run this code, open Terminal and enter 'node index.js'
+});
